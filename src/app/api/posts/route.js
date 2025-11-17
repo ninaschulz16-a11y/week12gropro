@@ -15,19 +15,21 @@ export const POST = async (req) => {
 
     //insert into posts table
     const insertPost = `
-        INSERT INTO posts (author_id, title, content, category, tags)
-        VALUES ($1, $2, $3, $4, $5)
+        INSERT INTO posts (author_id, title, content, category, tags, latitude, longitude)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING *;
         `;
 
     const postResult = await db.query(insertPost, [
       author_id,
-      title,
       content,
-      category,
-      tags,
-      content,
+      title || null,
+      category || null,
+      tags || null,
+      51.5074,
+      -0.1278
     ]);
+
     const post = postResult.rows[0];
 
     if (image_url) {
