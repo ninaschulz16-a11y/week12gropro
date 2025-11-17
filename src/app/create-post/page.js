@@ -9,4 +9,4 @@ function CreatePostPage() {
   )
 }
 
-export default page
+export default CreatePostPage;
