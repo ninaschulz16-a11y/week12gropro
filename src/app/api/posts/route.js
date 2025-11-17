@@ -1,10 +1,10 @@
 import { db } from "@/utils/db";
 
-
 export const POST = async (req) => {
   try {
     const body = await req.json();
     const { author_id, title, category, tags, content, image_url } = body;
+    console.log("Received image_url:", image_url);
 
     if (!author_id || !content) {
       return new Response(
@@ -22,12 +22,12 @@ export const POST = async (req) => {
 
     const postResult = await db.query(insertPost, [
       author_id,
-      content,
       title || null,
+      content,
       category || null,
       tags || null,
       51.5074,
-      -0.1278
+      -0.1278,
     ]);
 
     const post = postResult.rows[0];
@@ -35,7 +35,7 @@ export const POST = async (req) => {
     if (image_url) {
       const insertImage = `INSERT INTO post_images (post_id, image_url)
             VALUES ($1, $2)
-            RETURNING id, image_url;`;
+            RETURNING *;`;
       await db.query(insertImage, [post.id, image_url]);
     }
 
