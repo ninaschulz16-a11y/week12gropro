@@ -25,8 +25,7 @@ function CreatePostForm() {
     if (image) formData.append("image", image);
 
     try {
-      const author_id = 1;
-
+      const author_id = "73d18b16-dc77-4684-97ec-49fbcf87ece1";
       const postData = {
         author_id,
         title,
