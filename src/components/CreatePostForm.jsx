@@ -1,6 +1,6 @@
 "use client";
 import { supabase } from "@/utils/supabase";
-import React, { use } from "react";
+import React from "react";
 import { useState } from "react";
 
 function CreatePostForm() {
@@ -65,6 +65,7 @@ function CreatePostForm() {
         tags,
         image_url,
       };
+
 
       const res = await fetch("api/posts", {
         method: "POST",
