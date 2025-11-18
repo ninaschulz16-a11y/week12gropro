@@ -4,9 +4,8 @@ import { supabase } from "@/utils/supabase";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 
-
 export default function CreatePostForm() {
-  const { user } = useUser(); // get logged-in user
+  const { user } = useUser();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -26,21 +25,20 @@ export default function CreatePostForm() {
       return;
     }
 
-     try {
-    // Find the profile ID corresponding to the Clerk user ID
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("clerk_id", user.id)
-      .single();
+    try {
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("clerk_id", user.id)
+        .single();
 
-    if (profileError || !profile) {
-      throw new Error("Profile not found for this user.");
-    }
+      if (profileError || !profile) {
+        throw new Error("Profile not found for this user.");
+      }
 
-    const author_id = profile.id; // Clerk user ID (temporary for demo)
+      const author_id = profile.id;
 
-    let image_url = null;
+      let image_url = null;
 
       if (image) {
         const fileExt = image.name.split(".").pop();
@@ -110,22 +108,22 @@ export default function CreatePostForm() {
         className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow"
       >
         <div className="flex flex-col gap-2">
-          <label className="font-medium">Title</label>
+          <label className="font-medium text-gray-800">Title</label>
           <input
             type="text"
             placeholder="Enter the title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-[#EFEFEF] rounded-full px-3 py-2"
+            className="bg-gray-100 text-gray-800 rounded-full px-3 py-2 border border-gray-300 placeholder-gray-500"
           />
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="font-medium">Category</label>
+          <label className="font-medium text-gray-800">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#EFEFEF] rounded-2xl px-3 py-2"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300"
           >
             <option value="">Select category</option>
             <option value="Lend">Lend</option>
@@ -137,33 +135,33 @@ export default function CreatePostForm() {
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="font-medium">Tags (comma-separated)</label>
+          <label className="font-medium text-gray-800">Tags (comma-separated)</label>
           <input
             type="text"
             placeholder="e.g. Jobs, Tools, Free Stuff"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="bg-[#EFEFEF] rounded-2xl px-3 py-2"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300 placeholder-gray-500"
           />
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="font-medium">Description</label>
+          <label className="font-medium text-gray-800">Description</label>
           <textarea
             placeholder="Write your content..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="bg-[#EFEFEF] rounded-2xl px-3 py-2 h-32"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 h-32 border border-gray-300 placeholder-gray-500"
           />
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
-          <label className="font-medium">Upload Image</label>
+          <label className="font-medium text-gray-800">Upload Image</label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setImage(e.target.files[0])}
-            className="bg-[#EFEFEF] rounded-2xl px-3 py-2"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300"
           />
         </div>
 
@@ -171,7 +169,7 @@ export default function CreatePostForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-[#DFEBC5] mt-12 w-32 py-2 rounded-full hover:bg-[#3E513E] hover:text-white disabled:opacity-60"
+            className="bg-green-700 text-white mt-12 w-32 py-2 rounded-full hover:bg-green-800 disabled:opacity-60 transition"
           >
             {isSubmitting ? "Submitting..." : "Create Post"}
           </button>
