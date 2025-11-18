@@ -17,7 +17,6 @@ export default function CommentSection({
 
     const handleSubmitComment = async (e) => {
         e.preventDefault();
-        
         if (!newComment.trim() || !currentUserId) return;
 
         setIsSubmitting(true);
@@ -40,7 +39,7 @@ export default function CommentSection({
             alert("failed to post comment");
         }
         } catch (error) {
-        console.error("error posting comment:", error);
+        console.error(error);
         alert("error posting comment");
         } finally {
         setIsSubmitting(false);
@@ -52,7 +51,7 @@ export default function CommentSection({
 
         try {
         const res = await fetch(`/api/comments/${commentId}`, {
-            method: "DELETE",
+            method: "DELETE"
         });
 
         if (res.ok) {
