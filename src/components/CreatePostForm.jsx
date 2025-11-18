@@ -3,10 +3,7 @@
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
-import CommentSection from "./CommentSection";
-import Filters from "./Filters";
-import Map from "./Map";
-import PostsList from "./PostsList";
+
 
 export default function CreatePostForm() {
   const { user } = useUser(); // get logged-in user
@@ -29,11 +26,22 @@ export default function CreatePostForm() {
       return;
     }
 
-    const author_id = user.id; // Clerk user ID (temporary for demo)
+     try {
+    // Find the profile ID corresponding to the Clerk user ID
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("clerk_id", user.id)
+      .single();
+
+    if (profileError || !profile) {
+      throw new Error("Profile not found for this user.");
+    }
+
+    const author_id = profile.id; // Clerk user ID (temporary for demo)
 
     let image_url = null;
 
-    try {
       if (image) {
         const fileExt = image.name.split(".").pop();
         const fileName = `${Math.random()
@@ -46,7 +54,7 @@ export default function CreatePostForm() {
           .upload(filePath, image);
 
         if (uploadError) {
-          console.err("Upload error:", uploadError);
+          console.error("Upload error:", uploadError);
           setMessage("Failed to upload image: " + uploadError.message);
           setIsSubmitting(false);
           return;
@@ -68,7 +76,7 @@ export default function CreatePostForm() {
         image_url,
       };
 
-      const res = await fetch("api/posts", {
+      const res = await fetch("/api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -179,11 +187,6 @@ export default function CreatePostForm() {
           </p>
         )}
       </form>
-      <CommentSection />
-      <Filters />
-      <Map />
-            <PostsList />
-
     </div>
   );
 }
