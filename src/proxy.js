@@ -1,3 +1,32 @@
+// src/proxy.js
+
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+
+// define public routes that anyone can access
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/posts/(.*)',
+  '/profile/(.*)',
+]);
+
+export default clerkMiddleware(async (auth, request) => {
+  
+  // protect routes that aren't public
+  if (!isPublicRoute(request)) {
+    await auth.protect();
+  }
+
+  const { userId } = await auth();
+  
+  // redirect to profile after sign in/up
+  if (userId && request.nextUrl.pathname === '/') {
+    const profileUrl = new URL('/profile/me', request.url);
+    return NextResponse.redirect(profileUrl);
+  }
+});
 import { clerkMiddleware } from "@clerk/nextjs/server";
 
 export default clerkMiddleware();
@@ -9,4 +38,5 @@ export const config = {
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],
+};
 };
