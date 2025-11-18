@@ -6,7 +6,6 @@ import { useState } from "react";
 import CommentSection from "./CommentSection";
 import Filters from "./Filters";
 import Map from "./Map";
-import PostsList from "./PostsList";
 
 export default function CreatePostForm() {
   const { user } = useUser(); // get logged-in user
@@ -46,7 +45,7 @@ export default function CreatePostForm() {
           .upload(filePath, image);
 
         if (uploadError) {
-          console.err("Upload error:", uploadError);
+          console.error("Upload error:", uploadError);
           setMessage("Failed to upload image: " + uploadError.message);
           setIsSubmitting(false);
           return;
@@ -68,7 +67,7 @@ export default function CreatePostForm() {
         image_url,
       };
 
-      const res = await fetch("api/posts", {
+      const res = await fetch("/api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -182,8 +181,6 @@ export default function CreatePostForm() {
       <CommentSection />
       <Filters />
       <Map />
-            <PostsList />
-
     </div>
   );
 }
