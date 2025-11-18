@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { db } from "@/utils/db";
 import Image from "next/image";
+import Map from "./Map";
+import Filters from "./Filters";
 
 export default async function PostsList() {
   const result = await db.query(
@@ -18,17 +20,20 @@ export default async function PostsList() {
 
   const posts = result.rows;
 
-   if (posts.length === 0) {
+  if (posts.length === 0) {
     return <p className="text-center py-8">No posts yet.</p>;
   }
-
 
   return (
     <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-2xl font-bold mb-8 text-gray-800">Latest Posts</h1>
+        <Map />
+        <div className="mt-12">
+          <Filters />
+        </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 mt-12">
           {posts.map((post) => (
             <Link
               key={post.id}
