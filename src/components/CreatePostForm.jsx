@@ -178,9 +178,6 @@ export default function CreatePostForm() {
           </p>
         )}
       </form>
-      <CommentSection />
-      <Filters />
-      <Map />
     </div>
   );
 }
