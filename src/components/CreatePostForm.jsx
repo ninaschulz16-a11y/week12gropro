@@ -1,5 +1,6 @@
 "use client";
-import React, { use } from "react";
+import { supabase } from "@/utils/supabase";
+import React from "react";
 import { useState } from "react";
 
 function CreatePostForm() {
@@ -17,21 +18,67 @@ function CreatePostForm() {
     setMessage("");
 
     // FORMDATA
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-    formData.append("category", category);
-    formData.append("tags", tags);
-    if (image) formData.append("image", image);
+    // const formData = new FormData();
+    // formData.append("title", title);
+    // formData.append("content", content);
+    // formData.append("category", category);
+    // formData.append("tags", tags);
+    // if (image) formData.append("image", image);
 
     try {
+      const author_id = "73d18b16-dc77-4684-97ec-49fbcf87ece1";
+
+      let image_url = null;
+
+      // upload image to supabase storage
+      if (image) {
+        const fileExt = image.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
+      
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('post-images')
+      .upload(filePath, image);
+
+      if (uploadError) {
+        console.err("Upload error:", uploadError);
+        setMessage("Failed to upload image: " + uploadError.message);
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage
+      .from('post-images')
+      .getPublicUrl(filePath);
+
+      image_url = urlData.publicUrl;
+    }
+
+
+      // send post data to API
+      const postData = {
+        author_id,
+        title,
+        content,
+        category,
+        tags,
+        image_url,
+      };
+
+
       const res = await fetch("api/posts", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(postData),
       });
 
+      const data = await res.json();
+
       if (!res.ok) {
-        setMessage("Something went wrong");
+        setMessage(data.error || "Something went wrong");
       } else {
         setMessage("Post created successfully!");
 
@@ -51,7 +98,7 @@ function CreatePostForm() {
   };
 
   return (
-    <>
+    <div className="mb-10">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow"
@@ -131,9 +178,19 @@ function CreatePostForm() {
         </div>
 
         {/* MESSAGE */}
-        {message && <p className="mt-2 text-center text-sm">{message}</p>}
+        {message && (
+          <p
+            className={`mt-2 text-center text-sm ${
+              message.includes("successfully")
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
+            {message}
+          </p>
+        )}
       </form>
-    </>
+    </div>
   );
 }
 
