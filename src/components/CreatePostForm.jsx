@@ -2,6 +2,10 @@
 import { supabase } from "@/utils/supabase";
 import React from "react";
 import { useState } from "react";
+import CommentSection from "./CommentSection";
+import Filters from "./Filters";
+import Map from "./Map";
+import PostsList from "./PostsList";
 
 function CreatePostForm() {
   const [title, setTitle] = useState("");
@@ -32,29 +36,29 @@ function CreatePostForm() {
 
       // upload image to supabase storage
       if (image) {
-        const fileExt = image.name.split('.').pop();
-        const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const fileExt = image.name.split(".").pop();
+        const fileName = `${Math.random()
+          .toString(36)
+          .substring(2)}-${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
-      
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('post-images')
-      .upload(filePath, image);
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("post-images")
+          .upload(filePath, image);
 
-      if (uploadError) {
-        console.err("Upload error:", uploadError);
-        setMessage("Failed to upload image: " + uploadError.message);
-        setIsSubmitting(false);
-        return;
+        if (uploadError) {
+          console.err("Upload error:", uploadError);
+          setMessage("Failed to upload image: " + uploadError.message);
+          setIsSubmitting(false);
+          return;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from("post-images")
+          .getPublicUrl(filePath);
+
+        image_url = urlData.publicUrl;
       }
-
-      const { data: urlData } = supabase.storage
-      .from('post-images')
-      .getPublicUrl(filePath);
-
-      image_url = urlData.publicUrl;
-    }
-
 
       // send post data to API
       const postData = {
@@ -65,7 +69,6 @@ function CreatePostForm() {
         tags,
         image_url,
       };
-
 
       const res = await fetch("api/posts", {
         method: "POST",
@@ -190,6 +193,11 @@ function CreatePostForm() {
           </p>
         )}
       </form>
+      <CommentSection />
+      <Filters />
+      <Map />
+            <PostsList />
+
     </div>
   );
 }
