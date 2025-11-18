@@ -3,6 +3,10 @@
 import { supabase } from "@/utils/supabase";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import CommentSection from "./CommentSection";
+import Filters from "./Filters";
+import Map from "./Map";
+import PostsList from "./PostsList";
 
 export default function CreatePostForm() {
   const { user } = useUser(); // get logged-in user
@@ -31,23 +35,28 @@ export default function CreatePostForm() {
 
     try {
       if (image) {
-        const ext = image.name.split(".").pop();
-        const fileName = `${Date.now()}.${ext}`;
+        const fileExt = image.name.split(".").pop();
+        const fileName = `${Math.random()
+          .toString(36)
+          .substring(2)}-${Date.now()}.${fileExt}`;
+        const filePath = `${fileName}`;
 
-        const { error } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("post-images")
-          .upload(fileName, image);
+          .upload(filePath, image);
 
-        if (error) {
-          console.error(error);
-          throw new Error("Image upload failed");
+        if (uploadError) {
+          console.err("Upload error:", uploadError);
+          setMessage("Failed to upload image: " + uploadError.message);
+          setIsSubmitting(false);
+          return;
         }
 
-        const { data: urlData } = await supabase.storage
+        const { data: urlData } = supabase.storage
           .from("post-images")
-          .getPublicUrl(fileName);
+          .getPublicUrl(filePath);
 
-        image_url = urlData?.publicUrl || null;
+        image_url = urlData.publicUrl;
       }
 
       const postData = {
@@ -59,7 +68,7 @@ export default function CreatePostForm() {
         image_url,
       };
 
-      const res = await fetch("/api/posts", {
+      const res = await fetch("api/posts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -170,6 +179,11 @@ export default function CreatePostForm() {
           </p>
         )}
       </form>
+      <CommentSection />
+      <Filters />
+      <Map />
+            <PostsList />
+
     </div>
   );
 }

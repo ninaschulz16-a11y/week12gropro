@@ -26,7 +26,7 @@ export default function Filters({ onFilterChange }) {
         <label className="font-semibold mb-1">Filter by Category</label>
 
         <select
-          className="border p-2 rounded"
+          className=" bg-[#EFEFEF]  rounded-2xl px-3 py-2"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
@@ -44,7 +44,7 @@ export default function Filters({ onFilterChange }) {
 
         <input
           type="text"
-          className="border p-2 rounded"
+          className="bg-[#EFEFEF]  rounded-2xl px-3 py-2"
           placeholder="Enter city, postcode, or area"
           value={area}
           onChange={(e) => setArea(e.target.value)}
@@ -58,7 +58,7 @@ export default function Filters({ onFilterChange }) {
         </label>
 
         <select
-          className="border p-2 rounded"
+          className="bg-[#EFEFEF]  rounded-2xl px-3 py-2"
           value={radius}
           onChange={(e) => setRadius(e.target.value)}
         >
@@ -73,7 +73,7 @@ export default function Filters({ onFilterChange }) {
       {/* apply filters btn */}
       <button
         onClick={updateFilters}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-[#3E513E] text-white mt-8 mb-8 w-32 py-2 rounded-full hover:bg-[#3E513E] hover:text-white disabled:opacity-60"
       >
         Apply Filters
       </button>

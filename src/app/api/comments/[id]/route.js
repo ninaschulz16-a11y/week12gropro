@@ -3,48 +3,47 @@ import { db } from "@/utils/db";
 import { NextResponse } from "next/server";
 
 export async function DELETE(request, { params }) {
-    try {
-        const { userId } = auth();
-        
-        if (!userId) {
-        return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-        }
+  try {
+    const { userId } = auth();
 
-        const commentId = params.id;
+    if (!userId)
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-        // get user's profile
-        const userResult = await db.query(
-        "SELECT id FROM profiles WHERE clerk_user_id = $1",
-        [userId]
-        );
+    const commentId = params.id;
 
-        if (userResult.rows.length === 0) {
-        return NextResponse.json({ error: "profile not found" }, { status: 404 });
-        }
+    // get user's profile
+    const userResult = await db.query(
+      "SELECT id FROM profiles WHERE clerk_user_id = $1",
+      [userId]
+    );
 
-        const profileId = userResult.rows[0].id;
+    if (userResult.rows.length === 0)
+      return NextResponse.json({ error: "profile not found" }, { status: 404 });
 
-        // check if user owns the comment
-        const commentResult = await db.query(
-        "SELECT author_id FROM comments1 WHERE id = $1",
-        [commentId]
-        );
+    const profileId = userResult.rows[0].id;
 
-        if (commentResult.rows.length === 0) {
-        return NextResponse.json({ error: "comment not found" }, { status: 404 });
-        }
+    // check if user owns the comment
+    const commentResult = await db.query(
+      "SELECT author_id FROM comments1 WHERE id = $1",
+      [commentId]
+    );
 
-        if (commentResult.rows[0].author_id !== profileId) {
-        return NextResponse.json({ error: "can only delete your own comments" }, { status: 403 });
-        }
+    if (!commentResult.rows.length)
+      return NextResponse.json({ error: "comment not found" }, { status: 404 });
 
-        // delete the comment
-        await db.query("DELETE FROM comments1 WHERE id = $1", [commentId]);
+    if (commentResult.rows[0].author_id !== profileId) 
+      return NextResponse.json(
+        { error: "can only delete your own comments" },
+        { status: 403 }
+      );
+    
 
-        return NextResponse.json({ success: true, message: "comment deleted" });
-        
-    } catch (error) {
-        console.error("error deleting comment:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    // delete the comment
+    await db.query("DELETE FROM comments1 WHERE id = $1", [commentId]);
+
+    return NextResponse.json({ success: true, message: "comment deleted" });
+  } catch (error) {
+    console.error("error deleting comment:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 }
