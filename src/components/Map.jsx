@@ -1,60 +1,66 @@
 "use client";
-// this component must run on the client (browser) side
 
+// this component loads leaflet only on the client side
+import dynamic from "next/dynamic";
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"; // import main react leaflet components
-import L from "leaflet"; // leaflet core for custom icons
-import "leaflet/dist/leaflet.css"; // import default leaflet styles
+
+const MapContainer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.MapContainer),
+  { ssr: false }
+);
+
+const TileLayer = dynamic(
+  () => import("react-leaflet").then((mod) => mod.TileLayer),
+  { ssr: false }
+);
+
+const Marker = dynamic(
+  () => import("react-leaflet").then((mod) => mod.Marker),
+  { ssr: false }
+);
+
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 export default function Map() {
-  const [position, setPosition] = useState([0, 0]);
-  // default coordinates, will update to user's location
+  const [position, setPosition] = useState([51.505, -0.09]);
+  const [L, setL] = useState(null);
 
+  // load leaflet css and library dynamically
   useEffect(() => {
-    // check if geolocation is available in the browser
+    (async () => {
+      const leaflet = await import("leaflet");
+      await import("leaflet/dist/leaflet.css");
+      setL(leaflet.default);
+    })();
+
     if (navigator.geolocation) {
-      // get initial position
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setPosition([pos.coords.latitude, pos.coords.longitude]);
-        },
-        (err) => console.log(err)
-      );
-
-      // watch position to update marker if user moves
-      const watchId = navigator.geolocation.watchPosition(
-        (pos) => {
-          setPosition([pos.coords.latitude, pos.coords.longitude]);
-        },
-        (err) => console.log(err)
-      );
-
-      // cleanup watcher when component unmounts
-      return () => navigator.geolocation.clearWatch(watchId);
+      navigator.geolocation.getCurrentPosition((pos) => {
+        setPosition([pos.coords.latitude, pos.coords.longitude]);
+      });
     }
   }, []);
 
-  // custom icon for the marker
+  // wait until leaflet is loaded
+  if (!L) return <p className="text-gray-600">Loading map...</p>;
+
   const customIcon = L.icon({
-    iconUrl: "/pin.png", // path to your custom pin image in public folder
-    iconSize: [32, 32], // size of the icon
-    iconAnchor: [16, 32], // point of the icon which corresponds to marker's location
-    popupAnchor: [0, -32], // point from which the popup should open relative to iconAnchor
+    iconUrl: "/pin.png",
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
   });
 
   return (
     <MapContainer
-      center={position} // center map on user's position
-      zoom={13} // initial zoom
-      style={{ height: "400px", width: "100%" }} // map container size
+      center={position}
+      zoom={13}
+      style={{ height: "300px", width: "100%" }}
     >
-      <TileLayer
-        // tile layer from open street map
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <Marker position={position} icon={customIcon}>
-        {/* marker at user's coordinates */}
-        <Popup>📍 You are here</Popup>
+        <Popup>📍 You are here 📍</Popup>
       </Marker>
     </MapContainer>
   );

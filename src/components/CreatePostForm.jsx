@@ -1,13 +1,15 @@
 "use client";
+
 import { supabase } from "@/utils/supabase";
-import React from "react";
+import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import CommentSection from "./CommentSection";
 import Filters from "./Filters";
 import Map from "./Map";
 import PostsList from "./PostsList";
 
-function CreatePostForm() {
+export default function CreatePostForm() {
+  const { user } = useUser(); // get logged-in user
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState(null);
@@ -21,20 +23,17 @@ function CreatePostForm() {
     setIsSubmitting(true);
     setMessage("");
 
-    // FORMDATA
-    // const formData = new FormData();
-    // formData.append("title", title);
-    // formData.append("content", content);
-    // formData.append("category", category);
-    // formData.append("tags", tags);
-    // if (image) formData.append("image", image);
+    if (!user) {
+      setMessage("You must be logged in to create a post.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const author_id = user.id; // Clerk user ID (temporary for demo)
+
+    let image_url = null;
 
     try {
-      const author_id = "73d18b16-dc77-4684-97ec-49fbcf87ece1";
-
-      let image_url = null;
-
-      // upload image to supabase storage
       if (image) {
         const fileExt = image.name.split(".").pop();
         const fileName = `${Math.random()
@@ -60,7 +59,6 @@ function CreatePostForm() {
         image_url = urlData.publicUrl;
       }
 
-      // send post data to API
       const postData = {
         author_id,
         title,
@@ -80,21 +78,18 @@ function CreatePostForm() {
 
       const data = await res.json();
 
-      if (!res.ok) {
-        setMessage(data.error || "Something went wrong");
-      } else {
-        setMessage("Post created successfully!");
+      if (!res.ok) throw new Error(data.error || "Something went wrong");
 
-        // RESET FORM
-        setTitle("");
-        setContent("");
-        setCategory("");
-        setTags("");
-        setImage(null);
-      }
+      setMessage("Post created successfully!");
+
+      setTitle("");
+      setContent("");
+      setCategory("");
+      setTags("");
+      setImage(null);
     } catch (err) {
       console.error(err);
-      setMessage("Something went wrong!");
+      setMessage(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -106,7 +101,6 @@ function CreatePostForm() {
         onSubmit={handleSubmit}
         className="flex flex-col gap-4 bg-white p-6 rounded-xl shadow"
       >
-        {/* TITLE */}
         <div className="flex flex-col gap-2">
           <label className="font-medium">Title</label>
           <input
@@ -114,17 +108,16 @@ function CreatePostForm() {
             placeholder="Enter the title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className=" bg-[#EFEFEF]  rounded-full px-3 py-2"
+            className="bg-[#EFEFEF] rounded-full px-3 py-2"
           />
         </div>
 
-        {/* CATEGORY */}
         <div className="flex flex-col gap-2 mt-4">
           <label className="font-medium">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-[#EFEFEF]  rounded-2xl px-3 py-2"
+            className="bg-[#EFEFEF] rounded-2xl px-3 py-2"
           >
             <option value="">Select category</option>
             <option value="Lend">Lend</option>
@@ -135,19 +128,17 @@ function CreatePostForm() {
           </select>
         </div>
 
-        {/* TAGS */}
         <div className="flex flex-col gap-2 mt-4">
-          <label className="font-medium">Tags (comma-seperated)</label>
+          <label className="font-medium">Tags (comma-separated)</label>
           <input
             type="text"
-            placeholder="eg. Jobs, Tools, Free Stuff, "
+            placeholder="e.g. Jobs, Tools, Free Stuff"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="bg-[#EFEFEF]  rounded-2xl px-3 py-2"
+            className="bg-[#EFEFEF] rounded-2xl px-3 py-2"
           />
         </div>
 
-        {/* DESCRIPTION */}
         <div className="flex flex-col gap-2 mt-4">
           <label className="font-medium">Description</label>
           <textarea
@@ -155,21 +146,19 @@ function CreatePostForm() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
             className="bg-[#EFEFEF] rounded-2xl px-3 py-2 h-32"
-          ></textarea>
+          />
         </div>
 
-        {/* IMAGE UPLOAD */}
         <div className="flex flex-col gap-2 mt-4">
           <label className="font-medium">Upload Image</label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setImage(e.target.files[0])}
-            className=" bg-[#EFEFEF] rounded-2xl px-3 py-2"
+            className="bg-[#EFEFEF] rounded-2xl px-3 py-2"
           />
         </div>
 
-        {/* SUBMIT BUTTON */}
         <div className="flex items-center justify-center">
           <button
             type="submit"
@@ -180,13 +169,10 @@ function CreatePostForm() {
           </button>
         </div>
 
-        {/* MESSAGE */}
         {message && (
           <p
             className={`mt-2 text-center text-sm ${
-              message.includes("successfully")
-                ? "text-green-600"
-                : "text-red-600"
+              message.includes("success") ? "text-green-600" : "text-red-600"
             }`}
           >
             {message}
@@ -201,5 +187,3 @@ function CreatePostForm() {
     </div>
   );
 }
-
-export default CreatePostForm;

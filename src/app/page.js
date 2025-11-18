@@ -1,8 +1,6 @@
 import PostsList from "@/components/PostsList";
 import Image from "next/image";
 
-//  this is the landing page
-
 import { SignIn } from "@clerk/nextjs";
 
 export default function LandingPage() {
@@ -13,11 +11,9 @@ export default function LandingPage() {
           Welcome to Neighbour Net
         </h1>
         <SignIn
-          path="/"
-          routing="path"
-          signUpUrl="/"
-          afterSignInUrl="/welcome" // redirect here after login
-          afterSignUpUrl="/welcome" // redirect here after signup
+          routing="hash" // enable hash routing to avoid catch-all warning
+          afterSignInUrl="/home"
+          afterSignUpUrl="/home"
         />
       </div>
     </div>
