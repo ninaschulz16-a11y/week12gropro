@@ -1,12 +1,11 @@
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
   SignedIn,
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -16,8 +15,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Social Network",
-  description: "A simple social network with Clerk auth",
+  title: "Neighbour Net",
+  description: "Connect with your neighbours",
 };
 
 export default function RootLayout({ children }) {
@@ -29,20 +28,60 @@ export default function RootLayout({ children }) {
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {/* header */}
-          <header className="flex justify-end items-center p-4 gap-4 h-16">
-            <SignedOut>
-              <SignInButton />
-              <SignUpButton>
-                <button className="bg-[#6c47ff] text-white rounded-full font-medium h-10 px-4 cursor-pointer">
-                  Sign Up
-                </button>
-              </SignUpButton>
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </header>
+          {/* navbar */}
+          <nav className="bg-white shadow-md sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 py-3">
+              <div className="flex items-center justify-between">
+                
+                {/* logo */}
+                <Link href="/" className="text-xl font-bold text-green-700">
+                  neighbour net
+                </Link>
+
+                {/* nav links */}
+                <div className="flex items-center gap-6">
+                  <Link 
+                    href="/posts" 
+                    className="text-gray-700 hover:text-green-700 transition"
+                  >
+                    posts
+                  </Link>
+
+                  <SignedOut>
+                    <Link 
+                      href="/sign-in" 
+                      className="text-gray-700 hover:text-green-700 transition"
+                    >
+                      sign in
+                    </Link>
+                    <Link 
+                      href="/sign-up" 
+                      className="bg-green-700 text-white px-4 py-2 rounded-full hover:bg-green-800 transition"
+                    >
+                      sign up
+                    </Link>
+                  </SignedOut>
+
+                  <SignedIn>
+                    <Link 
+                      href="/home" 
+                      className="text-gray-700 hover:text-green-700 transition"
+                    >
+                      my profile
+                    </Link>
+                    <Link 
+                      href="/create-post" 
+                      className="text-gray-700 hover:text-green-700 transition"
+                    >
+                      create post
+                    </Link>
+                    <UserButton afterSignOutUrl="/" />
+                  </SignedIn>
+                </div>
+              </div>
+            </div>
+          </nav>
+
           {children}
         </body>
       </html>

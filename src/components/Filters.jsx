@@ -8,7 +8,6 @@ export default function Filters({ onFilterChange }) {
   const [radius, setRadius] = useState("");
 
   const updateFilters = () => {
-    // send values to parent page only if a function is given
     if (typeof onFilterChange === "function") {
       onFilterChange({
         category,
@@ -18,15 +17,13 @@ export default function Filters({ onFilterChange }) {
     }
   };
 
-  // this returns the visible UI
   return (
     <div className="p-4 border rounded-lg shadow-sm bg-white space-y-4">
       {/* category filter */}
       <div className="flex flex-col">
-        <label className="font-semibold mb-1">Filter by Category</label>
-
+        <label className="font-semibold mb-1 text-gray-800">Filter by Category</label>
         <select
-          className=" bg-[#EFEFEF]  rounded-2xl px-3 py-2"
+          className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         >
@@ -40,11 +37,10 @@ export default function Filters({ onFilterChange }) {
 
       {/* area filter */}
       <div className="flex flex-col">
-        <label className="font-semibold mb-1">Filter by Area / City</label>
-
+        <label className="font-semibold mb-1 text-gray-800">Filter by Area / City</label>
         <input
           type="text"
-          className="bg-[#EFEFEF]  rounded-2xl px-3 py-2"
+          className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300 placeholder-gray-500"
           placeholder="Enter city, postcode, or area"
           value={area}
           onChange={(e) => setArea(e.target.value)}
@@ -53,12 +49,9 @@ export default function Filters({ onFilterChange }) {
 
       {/* radius filter */}
       <div className="flex flex-col">
-        <label className="font-semibold mb-1">
-          Filter by Radius (optional)
-        </label>
-
+        <label className="font-semibold mb-1 text-gray-800">Filter by Radius (optional)</label>
         <select
-          className="bg-[#EFEFEF]  rounded-2xl px-3 py-2"
+          className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300"
           value={radius}
           onChange={(e) => setRadius(e.target.value)}
         >
@@ -73,7 +66,7 @@ export default function Filters({ onFilterChange }) {
       {/* apply filters btn */}
       <button
         onClick={updateFilters}
-        className="bg-[#3E513E] text-white mt-8 mb-8 w-32 py-2 rounded-full hover:bg-[#3E513E] hover:text-white disabled:opacity-60"
+        className="bg-green-700 text-white mt-4 mb-4 px-6 py-2 rounded-full hover:bg-green-800 transition"
       >
         Apply Filters
       </button>
