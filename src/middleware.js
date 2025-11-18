@@ -23,13 +23,10 @@ export default clerkMiddleware(async (auth, request) => {
   
   // redirect to profile after sign in/up
   if (userId && request.nextUrl.pathname === '/') {
-    const profileUrl = new URL('/profile/me', request.url);
-    return NextResponse.redirect(profileUrl);
+    return NextResponse.redirect(new URL('/profile/me', request.url));
   }
 });
-import { clerkMiddleware } from "@clerk/nextjs/server";
 
-export default clerkMiddleware();
 
 export const config = {
   matcher: [
@@ -38,5 +35,4 @@ export const config = {
     // Always run for API routes
     "/(api|trpc)(.*)",
   ],
-};
 };
