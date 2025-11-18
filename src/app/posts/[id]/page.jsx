@@ -4,9 +4,13 @@ import CommentSection from "@/components/CommentSection";
 import Link from "next/link";
 import Image from "next/image";
 
-export default async function PostPage({ params }) {
+export default async function PostDetail({ params }) {
+
+    const resolvedParams = await params;
+    console.log("params.id:", resolvedParams);
+
     const { userId } = auth();
-    const postId = params.id;
+    const postId = resolvedParams.id;
 
     // get post data
     const postResult = await db.query(
@@ -16,7 +20,7 @@ export default async function PostPage({ params }) {
         profiles.avatar_url,
         profiles.id as author_profile_id
         FROM posts 
-        JOIN profiles ON posts.author_id = profiles.id 
+        LEFT JOIN profiles ON posts.author_id = profiles.id 
         WHERE posts.id = $1`,
         [postId]
     );

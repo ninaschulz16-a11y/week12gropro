@@ -1,31 +1,32 @@
 // src/proxy.js
 
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 // define public routes that anyone can access
 const isPublicRoute = createRouteMatcher([
-  "/",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/posts/(.*)",
-  "/profile/(.*)",
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/posts/(.*)',
+  '/profile/(.*)',
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
+  
   // protect routes that aren't public
   if (!isPublicRoute(request)) {
     await auth.protect();
   }
 
   const { userId } = await auth();
-
+  
   // redirect to profile after sign in/up
-  if (userId && request.nextUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/profile/me", request.url));
+  if (userId && request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL('/profile/me', request.url));
   }
-  return NextResponse.next();
 });
+
 
 export const config = {
   matcher: [
