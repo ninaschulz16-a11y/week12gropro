@@ -1,6 +1,5 @@
 "use client";
 
-import { supabase } from "@/utils/supabase";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 
@@ -19,86 +18,23 @@ export default function CreatePostForm() {
     setIsSubmitting(true);
     setMessage("");
 
+    // check if user is logged in
     if (!user) {
       setMessage("You must be logged in to create a post.");
       setIsSubmitting(false);
       return;
     }
 
-    try {
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("clerk_id", user.id)
-        .single();
-
-      if (profileError || !profile) {
-        throw new Error("Profile not found for this user.");
-      }
-
-      const author_id = profile.id;
-
-      let image_url = null;
-
-      if (image) {
-        const fileExt = image.name.split(".").pop();
-        const fileName = `${Math.random()
-          .toString(36)
-          .substring(2)}-${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`;
-
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("post-images")
-          .upload(filePath, image);
-
-        if (uploadError) {
-          console.error("Upload error:", uploadError);
-          setMessage("Failed to upload image: " + uploadError.message);
-          setIsSubmitting(false);
-          return;
-        }
-
-        const { data: urlData } = supabase.storage
-          .from("post-images")
-          .getPublicUrl(filePath);
-
-        image_url = urlData.publicUrl;
-      }
-
-      const postData = {
-        author_id,
-        title,
-        content,
-        category,
-        tags,
-        image_url,
-      };
-
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(postData),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) throw new Error(data.error || "Something went wrong");
-
-      setMessage("Post created successfully!");
-
-      setTitle("");
-      setContent("");
-      setCategory("");
-      setTags("");
-      setImage(null);
-    } catch (err) {
-      console.error(err);
-      setMessage(err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    // demo mode - show success message
+    setMessage("Post created successfully! (Demo mode)");
+    setIsSubmitting(false);
+    
+    // clear form
+    setTitle("");
+    setContent("");
+    setCategory("");
+    setTags("");
+    setImage(null);
   };
 
   return (
@@ -114,7 +50,7 @@ export default function CreatePostForm() {
             placeholder="Enter the title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="bg-gray-100 text-gray-800 rounded-full px-3 py-2 border border-gray-300 placeholder-gray-500"
+            className="bg-gray-100 text-gray-800 rounded-full px-4 py-2 border border-gray-300 placeholder-gray-500"
           />
         </div>
 
@@ -123,7 +59,7 @@ export default function CreatePostForm() {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-4 py-2 border border-gray-300"
           >
             <option value="">Select category</option>
             <option value="Lend">Lend</option>
@@ -141,7 +77,7 @@ export default function CreatePostForm() {
             placeholder="e.g. Jobs, Tools, Free Stuff"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300 placeholder-gray-500"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-4 py-2 border border-gray-300 placeholder-gray-500"
           />
         </div>
 
@@ -151,7 +87,7 @@ export default function CreatePostForm() {
             placeholder="Write your content..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 h-32 border border-gray-300 placeholder-gray-500"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-4 py-2 h-32 border border-gray-300 placeholder-gray-500"
           />
         </div>
 
@@ -161,7 +97,7 @@ export default function CreatePostForm() {
             type="file"
             accept="image/*"
             onChange={(e) => setImage(e.target.files[0])}
-            className="bg-gray-100 text-gray-800 rounded-2xl px-3 py-2 border border-gray-300"
+            className="bg-gray-100 text-gray-800 rounded-2xl px-4 py-2 border border-gray-300"
           />
         </div>
 
@@ -169,18 +105,16 @@ export default function CreatePostForm() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-green-700 text-white mt-12 w-32 py-2 rounded-full hover:bg-green-800 disabled:opacity-60 transition"
+            className="bg-[#3E513E] text-white mt-8 px-8 py-2 rounded-full hover:bg-[#2d3d2d] disabled:opacity-60 transition"
           >
             {isSubmitting ? "Submitting..." : "Create Post"}
           </button>
         </div>
 
         {message && (
-          <p
-            className={`mt-2 text-center text-sm ${
-              message.includes("success") ? "text-green-600" : "text-red-600"
-            }`}
-          >
+          <p className={`mt-2 text-center text-sm ${
+            message.includes("successfully") ? "text-green-600" : "text-red-600"
+          }`}>
             {message}
           </p>
         )}
