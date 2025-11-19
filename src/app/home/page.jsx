@@ -1,19 +1,21 @@
 "use client";
 
-// this page checks if the user already has a profile in the database.. if not, it creates one automatically and redirects to profile page
-
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
+  // get user info from clerk
   const { user, isLoaded, isSignedIn } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoaded) return;
+    // wait for clerk to load
+    if (!isLoaded) {
+      return;
+    }
 
-    // if user is not signed in redirect to sign in page
+    // if not signed in, go to sign in page
     if (!isSignedIn) {
       router.push("/sign-in");
       return;
@@ -21,8 +23,8 @@ export default function HomePage() {
 
     async function checkProfile() {
       try {
-        // send clerk id to api to create or fetch profile
-        const res = await fetch("/api/profile", {
+        // create or fetch profile from database
+        const response = await fetch("/api/profile", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -34,18 +36,20 @@ export default function HomePage() {
           }),
         });
 
-        const data = await res.json();
+        const profileData = await response.json();
 
-        // redirect to own profile using id from db
-        if (data?.id) {
-          router.push(`/profile/${data.id}`);
+        // redirect to profile page
+        if (profileData?.id) {
+          router.push(`/profile/${profileData.id}`);
         }
+        
       } catch (error) {
         console.error("profile setup error:", error);
       }
     }
 
     checkProfile();
+    
   }, [isLoaded, isSignedIn, user, router]);
 
   return (
