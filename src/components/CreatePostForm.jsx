@@ -32,6 +32,8 @@ export default function CreatePostForm() {
         .eq("clerk_user_id", user.id)
         .single();
 
+        console.log(user.id);
+
       if (profileError || !profile) {
         throw new Error("Profile not found for this user.");
       }
