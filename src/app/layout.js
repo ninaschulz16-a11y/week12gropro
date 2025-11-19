@@ -34,7 +34,7 @@ export default function RootLayout({ children }) {
               <div className="flex items-center justify-between">
                 
                 {/* logo */}
-                <Link href="/" className="text-xl font-bold text-green-700">
+                <Link href="/" className="text-xl font-bold text-[#3E513E]">
                   neighbour net
                 </Link>
 
@@ -42,7 +42,7 @@ export default function RootLayout({ children }) {
                 <div className="flex items-center gap-6">
                   <Link 
                     href="/posts" 
-                    className="text-gray-700 hover:text-green-700 transition"
+                    className="text-gray-700 hover:text-[#3E513E] transition"
                   >
                     posts
                   </Link>
@@ -50,7 +50,7 @@ export default function RootLayout({ children }) {
                   <SignedOut>
                     <Link 
                       href="/sign-in" 
-                      className="text-gray-700 hover:text-green-700 transition"
+                      className="text-gray-700 hover:text-[#3E513E] transition"
                     >
                       sign in
                     </Link>
@@ -65,13 +65,13 @@ export default function RootLayout({ children }) {
                   <SignedIn>
                     <Link 
                       href="/home" 
-                      className="text-gray-700 hover:text-green-700 transition"
+                      className="text-gray-700 hover:text-[#3E513E] transition"
                     >
                       my profile
                     </Link>
                     <Link 
                       href="/create-post" 
-                      className="text-gray-700 hover:text-green-700 transition"
+                      className="text-gray-700 hover:text-[#3E513E] transition"
                     >
                       create post
                     </Link>
