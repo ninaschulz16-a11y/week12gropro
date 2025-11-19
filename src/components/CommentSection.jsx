@@ -41,13 +41,7 @@ export default function CommentSection({
     initialComments?.length > 0 ? initialComments : fakeComments
   );
 
-  const handleSubmitComment = async (e) => {
-    e.preventDefault();
-    if (!newComment.trim() || !currentUserId) return;
-
-    setIsSubmitting(true);
-
-    // no backend needed, just for UI
+   // no backend needed, just for UI
     const handleLike = (commentId) => {
       setComments((prev) =>
         prev.map((c) =>
@@ -73,6 +67,13 @@ export default function CommentSection({
       if (diff < 3660) return `${Math.floor(diff / 60)}m ago`;
       if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
     };
+
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim() || !currentUserId) return;
+
+    setIsSubmitting(true);
+
 
     try {
       const res = await fetch("/api/comments", {
@@ -221,15 +222,33 @@ export default function CommentSection({
                     </p>
                   </div>
 
-                  {currentUserId &&
-                    comment.author_id === currentUserProfile?.id && (
-                      <button
-                        onClick={() => handleDeleteComment(comment.id)}
-                        className="text-red-500 text-sm mt-2 hover:underline"
-                      >
-                        delete
-                      </button>
-                    )}
+                  <div className="flex items-center gap-4 mt-2 text-sm">
+                    {/* // like button */}
+                    <button
+                      onClick={() => handleLike(comment.id)}
+                      className="flex items-center gap-1 text-gray-600 hover:text-orange-500 transition"
+                    >
+                      👍 <span>{comment.likes || 0}</span>
+                    </button>
+
+                    {/* dislike button */}
+                    <button
+                      onClick={() => handleDislike(comment.id)}
+                      className="flex items-center gap-1 text-gray-600 hover:text-red-500 transition"
+                    >
+                      👎 <span>{comment.dislikes || 0}</span>
+                    </button>
+
+                    {currentUserId &&
+                      comment.author_id === currentUserProfile?.id && (
+                        <button
+                          onClick={() => handleDeleteComment(comment.id)}
+                          className="text-red-500 text-sm ml-auto hover:underline"
+                        >
+                          delete
+                        </button>
+                      )}
+                  </div>
                 </div>
               </div>
             </div>
