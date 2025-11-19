@@ -47,32 +47,8 @@ export default function CreatePostForm() {
         return;
       }
 
-      // upload image if there is one
-      let imageUrl = null;
-
-      if (image) {
-        const fileExtension = image.name.split(".").pop();
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExtension}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("post-images")
-          .upload(fileName, image);
-
-        if (uploadError) {
-          setMessage("Failed to upload image: " + uploadError.message);
-          setIsSubmitting(false);
-          return;
-        }
-
-        const { data: urlData } = supabase.storage
-          .from("post-images")
-          .getPublicUrl(fileName);
-
-        imageUrl = urlData.publicUrl;
-      }
-
       // create the post
-      const { error: postError } = await supabase
+      const { data: newPost, error: postError } = await supabase
         .from("posts")
         .insert([
           {
@@ -81,11 +57,12 @@ export default function CreatePostForm() {
             content: content,
             category: category || null,
             tags: tags || null,
-            image_url: imageUrl,
             latitude: 51.5074,
             longitude: -0.1278,
           }
-        ]);
+        ])
+        .select()
+        .single();
 
       if (postError) {
         setMessage("Failed to create post: " + postError.message);

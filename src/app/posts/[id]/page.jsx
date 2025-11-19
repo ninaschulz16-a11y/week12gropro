@@ -31,7 +31,6 @@ export default function PostPage() {
             content,
             created_at,
             category,
-            image_url,
             author_id,
             profiles (
               id,
@@ -55,7 +54,6 @@ export default function PostPage() {
           content: postData.content,
           created_at: postData.created_at,
           category: postData.category,
-          image_url: postData.image_url,
           author_id: postData.author_id,
           username: postData.profiles?.username || "user",
           avatar_url: postData.profiles?.avatar_url || null,
