@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "@/utils/supabase";
 import CommentSection from "@/components/CommentSection";
 
 export default function PostPage() {
@@ -22,18 +23,75 @@ export default function PostPage() {
 
     async function fetchPost() {
       try {
-        // fetch post from database
-        const response = await fetch(`/api/posts/${postId}`);
-        
-        if (response.ok) {
-          const data = await response.json();
-          setPost(data.post);
-          setComments(data.comments || []);
-        } else {
+        // get the post with author info
+        const { data: postData, error: postError } = await supabase
+          .from("posts")
+          .select(`
+            id,
+            content,
+            created_at,
+            category,
+            author_id,
+            profiles (
+              id,
+              username,
+              avatar_url
+            )
+          `)
+          .eq("id", postId)
+          .single();
+
+        if (postError || !postData) {
+          console.error("Error fetching post:", postError);
           setPost(null);
+          setLoading(false);
+          return;
         }
+
+        // format the post data
+        const formattedPost = {
+          id: postData.id,
+          content: postData.content,
+          created_at: postData.created_at,
+          category: postData.category,
+          author_id: postData.author_id,
+          username: postData.profiles?.username || "user",
+          avatar_url: postData.profiles?.avatar_url || null,
+          author_profile_id: postData.profiles?.id || postData.author_id
+        };
+
+        setPost(formattedPost);
+
+        // get comments for this post
+        const { data: commentsData, error: commentsError } = await supabase
+          .from("comments")
+          .select(`
+            id,
+            content,
+            created_at,
+            author_id,
+            profiles (
+              username,
+              avatar_url
+            )
+          `)
+          .eq("post_id", postId)
+          .order("created_at", { ascending: false });
+
+        if (!commentsError && commentsData) {
+          const formattedComments = commentsData.map((comment) => ({
+            id: comment.id,
+            content: comment.content,
+            created_at: comment.created_at,
+            author_id: comment.author_id,
+            username: comment.profiles?.username || "user",
+            avatar_url: comment.profiles?.avatar_url || null
+          }));
+          setComments(formattedComments);
+        }
+
       } catch (error) {
-        console.error("error fetching post:", error);
+        console.error("Error:", error);
         setPost(null);
       } finally {
         setLoading(false);
@@ -76,7 +134,7 @@ export default function PostPage() {
         
         <div className="bg-white border rounded-xl shadow-lg p-8 mb-6">
           
-          <Link href={`/profile/${post.author_profile_id || post.author_id}`}>
+          <Link href={`/profile/${post.author_profile_id}`}>
             <div className="flex items-center gap-3 mb-6 cursor-pointer hover:opacity-80">
               <div className="w-12 h-12 rounded-full bg-[#3E513E] flex items-center justify-center text-white text-lg">
                 {post.username?.charAt(0).toUpperCase()}
