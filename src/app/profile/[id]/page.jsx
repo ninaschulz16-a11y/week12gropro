@@ -25,7 +25,7 @@ export default function ProfilePage() {
 
     async function fetchData() {
       try {
-        // set profile from your clerk user data
+        // get profile info
         setProfile({
           id: profileId,
           username: user?.username || user?.firstName || "user",
@@ -35,7 +35,7 @@ export default function ProfilePage() {
         });
 
         // get all posts from database
-        const { data, error } = await supabase
+        const { data: postsData, error: postsError } = await supabase
           .from("posts")
           .select(`
             id,
@@ -48,13 +48,13 @@ export default function ProfilePage() {
           `)
           .order("created_at", { ascending: false });
 
-        if (error) {
-          console.error("Error fetching posts:", error);
+        if (postsError) {
+          console.error("Error fetching posts:", postsError);
           setPosts([]);
           setFilteredPosts([]);
         } else {
           // format the posts
-          const formattedPosts = data.map((post) => ({
+          const formattedPosts = postsData.map((post) => ({
             id: post.id,
             content: post.content,
             created_at: post.created_at,
@@ -157,7 +157,7 @@ export default function ProfilePage() {
               <div className="border-b p-4 hover:bg-gray-50 cursor-pointer transition">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="w-8 h-8 min-w-8 min-h-8 rounded-full bg-[#3E513E] flex items-center justify-center text-white text-sm">
-                    {post.username?.charAt(0).toUpperCase()}
+                  {post.username?.charAt(0).toUpperCase()}
                   </div>
                   <p className="font-semibold text-gray-800">{post.username}</p>
                 </div>

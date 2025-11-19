@@ -9,12 +9,10 @@ export default function SignInPage() {
             afterSignInUrl="/home"
             appearance={{
             elements: {
-                formButtonPrimary: {
-                backgroundColor: "#3E513E",
-                "&:hover": {
-                    backgroundColor: "#2d3d2d"
-                }
-                }
+                formButtonPrimary: 
+                "bg-[#3E513E] hover:bg-[#2d3d2d] text-white !important",
+                primaryButton:
+                "bg-[#3E513E] hover:bg-[#2d3d2d] text-white !important"
             }
             }}
         />
