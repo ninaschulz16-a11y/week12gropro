@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/utils/supabase";
 
 export default function CommentSection({ 
     postId, 
@@ -15,8 +16,8 @@ export default function CommentSection({
     const [message, setMessage] = useState("");
 
     // handle posting a new comment
-    const handleSubmitComment = async (e) => {
-        e.preventDefault();
+    const handleSubmitComment = async (event) => {
+        event.preventDefault();
         
         if (!newComment.trim()) {
         setMessage("please write something");
@@ -31,32 +32,88 @@ export default function CommentSection({
         setIsSubmitting(true);
         setMessage("");
 
-        // create new comment (demo mode - just adds to local state)
+        try {
+        // find the profile for this user
+        const { data: profile, error: profileError } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("clerk_user_id", currentUserId)
+            .single();
+
+        if (profileError || !profile) {
+            setMessage("profile not found. please sign out and back in.");
+            setIsSubmitting(false);
+            return;
+        }
+
+        // save comment to database
+        const { data: savedComment, error: commentError } = await supabase
+            .from("comments")
+            .insert([
+            {
+                post_id: postId,
+                author_id: profile.id,
+                content: newComment.trim(),
+            }
+            ])
+            .select()
+            .single();
+
+        if (commentError) {
+            setMessage("failed to post comment: " + commentError.message);
+            setIsSubmitting(false);
+            return;
+        }
+
+        // add comment to local state
         const newCommentData = {
-        id: `comment-${Date.now()}`,
-        username: currentUserProfile?.username || "you",
-        avatar_url: currentUserProfile?.avatar_url || null,
-        author_id: currentUserId,
-        content: newComment.trim(),
-        created_at: new Date()
+            id: savedComment.id,
+            username: currentUserProfile?.username || "you",
+            avatar_url: currentUserProfile?.avatar_url || null,
+            author_id: profile.id,
+            content: newComment.trim(),
+            created_at: new Date()
         };
 
         setComments([newCommentData, ...comments]);
         setNewComment("");
-        setIsSubmitting(false);
         setMessage("comment posted!");
         
         // clear message after 2 seconds
         setTimeout(() => setMessage(""), 2000);
+
+        } catch (error) {
+        console.error("Error posting comment:", error);
+        setMessage("something went wrong");
+        } finally {
+        setIsSubmitting(false);
+        }
     };
 
     // handle deleting a comment
-    const handleDeleteComment = (commentId) => {
+    const handleDeleteComment = async (commentId) => {
         if (!confirm("delete this comment?")) {
         return;
         }
-        
+
+        try {
+        // delete from database
+        const { error } = await supabase
+            .from("comments")
+            .delete()
+            .eq("id", commentId);
+
+        if (error) {
+            console.error("Error deleting comment:", error);
+            return;
+        }
+
+        // remove from local state
         setComments(comments.filter((comment) => comment.id !== commentId));
+
+        } catch (error) {
+        console.error("Error:", error);
+        }
     };
 
     return (
@@ -72,14 +129,14 @@ export default function CommentSection({
             <div className="flex gap-3">
                 
                 {/* user avatar */}
-                <div className="w-10 h-10 rounded-full bg-[#3E513E] flex items-center justify-center text-white flex-shrink-0">
+                <div className="w-10 h-10 min-w-10 min-h-10 rounded-full bg-[#3E513E] flex items-center justify-center text-white flex-shrink-0">
                 {currentUserProfile?.username?.charAt(0).toUpperCase() || "U"}
                 </div>
                 
                 <div className="flex-1">
                 <textarea
                     value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
+                    onChange={(event) => setNewComment(event.target.value)}
                     placeholder="write a comment..."
                     className="w-full p-4 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-[#3E513E] text-gray-800 placeholder-gray-500"
                     rows="3"
@@ -123,7 +180,7 @@ export default function CommentSection({
                 <div className="flex items-start gap-3">
                     
                     {/* comment author avatar */}
-                    <div className="w-10 h-10 rounded-full bg-[#3E513E] flex items-center justify-center text-white">
+                    <div className="w-10 h-10 min-w-10 min-h-10 rounded-full bg-[#3E513E] flex items-center justify-center text-white">
                     {comment.username?.charAt(0).toUpperCase()}
                     </div>
                     

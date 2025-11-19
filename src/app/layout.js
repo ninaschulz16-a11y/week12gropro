@@ -39,10 +39,10 @@ export default function RootLayout({ children }) {
                 </Link>
 
                 {/* nav links */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2">
                   <Link 
                     href="/posts" 
-                    className="text-gray-700 hover:text-[#3E513E] transition"
+                    className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                   >
                     posts
                   </Link>
@@ -50,13 +50,13 @@ export default function RootLayout({ children }) {
                   <SignedOut>
                     <Link 
                       href="/sign-in" 
-                      className="text-gray-700 hover:text-[#3E513E] transition"
+                      className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                     >
                       sign in
                     </Link>
                     <Link 
                       href="/sign-up" 
-                      className="bg-green-700 text-white px-4 py-2 rounded-full hover:bg-green-800 transition"
+                      className="bg-[#3E513E] text-white px-4 py-2 rounded-full hover:bg-[#2d3d2d] transition"
                     >
                       sign up
                     </Link>
@@ -65,13 +65,13 @@ export default function RootLayout({ children }) {
                   <SignedIn>
                     <Link 
                       href="/home" 
-                      className="text-gray-700 hover:text-[#3E513E] transition"
+                      className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                     >
                       my profile
                     </Link>
                     <Link 
                       href="/create-post" 
-                      className="text-gray-700 hover:text-[#3E513E] transition"
+                      className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                     >
                       create post
                     </Link>
