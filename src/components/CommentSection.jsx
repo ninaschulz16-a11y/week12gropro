@@ -41,39 +41,41 @@ export default function CommentSection({
     initialComments?.length > 0 ? initialComments : fakeComments
   );
 
-   // no backend needed, just for UI
-    const handleLike = (commentId) => {
+  // post request backend
+  const handleVote = async (commentId, type) => {
+    try {
+      const res = await fetch(`/api/comments/${commentId}/vote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type }), // "like" or "dislike"
+      });
+      if (!res.ok) throw new Error("failed to vote");
+
+      const { comment } = await res.json();
       setComments((prev) =>
-        prev.map((c) =>
-          c.id === commentId ? { ...c, likes: (c.likes || 0) + 1 } : c
-        )
+        prev.map((c) => (c.id === comment.id ? comment : c))
       );
-    };
+    } catch (error) {
+      console.error(error);
+      alert("Error updating vote");
+    }
+  };
 
-    const handleDislike = (commentId) => {
-      setComments((prev) =>
-        prev.map((c) =>
-          c.id === commentId ? { ...c, dislikes: (c.dislikes || 0) + 1 } : c
-        )
-      );
-    };
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = (now - date) / 1000; // seconds
 
-    const formatTime = (dateString) => {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diff = (now - date) / 1000; // seconds
-
-      if (diff < 60) return "just now";
-      if (diff < 3660) return `${Math.floor(diff / 60)}m ago`;
-      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    };
+    if (diff < 60) return "just now";
+    if (diff < 3660) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  };
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !currentUserId) return;
 
     setIsSubmitting(true);
-
 
     try {
       const res = await fetch("/api/comments", {
