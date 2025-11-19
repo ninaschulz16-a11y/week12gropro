@@ -1,12 +1,12 @@
 import CreatePostForm from "@/components/CreatePostForm";
 
-function CreatePostPage() {
+export default function CreatePostPage() {
   return (
-    <div className="max-w-xl mx-auto mt-10">
-        <h1 className="text-2xl font-bold mb-6">Create a New Post</h1>
+    <div className="min-h-screen bg-[#F5F5DC] py-10 px-4">
+      <div className="max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-6 text-gray-800">Create a New Post</h1>
         <CreatePostForm />
+      </div>
     </div>
-  )
+  );
 }
-
-export default CreatePostPage;
