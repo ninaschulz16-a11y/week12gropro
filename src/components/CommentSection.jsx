@@ -47,7 +47,6 @@ export default function CommentSection({
 
     setIsSubmitting(true);
 
-
     // no backend needed, just for UI
     const handleLike = (commentId) => {
       setComments((prev) =>
@@ -66,15 +65,14 @@ export default function CommentSection({
     };
 
     const formatTime = (dateString) => {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diff = (now - date) / 1000; // seconds
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = (now - date) / 1000; // seconds
 
-        if (diff < 60) return "just now";
-        if (diff < 3660) return `${Math.floor(diff / 60)}m ago`;
-        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-        
-    }
+      if (diff < 60) return "just now";
+      if (diff < 3660) return `${Math.floor(diff / 60)}m ago`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    };
 
     try {
       const res = await fetch("/api/comments", {
@@ -213,13 +211,15 @@ export default function CommentSection({
                     <span className="text-gray-400 text-sm">·</span>
 
                     <p className="text-sm text-gray-500">
-                      {new Date(comment.created_at).toLocaleDateString()}
+                      {formatTime(comment.created_at)}
                     </p>
                   </div>
 
-                  <p className="text-gray-700 whitespace-pre-wrap">
-                    {comment.content}
-                  </p>
+                  <div className="bg-gray-50 p-3 rounded-xl">
+                    <p className="text-gray-700 whitespace-pre-wrap">
+                      {comment.content}
+                    </p>
+                  </div>
 
                   {currentUserId &&
                     comment.author_id === currentUserProfile?.id && (
