@@ -227,18 +227,18 @@ export default function CommentSection({
                   <div className="flex items-center gap-4 mt-2 text-sm">
                     {/* // like button */}
                     <button
-                      onClick={() => handleLike(comment.id)}
+                      onClick={() => handleVote(comment.id, "like")}
                       className="flex items-center gap-1 text-gray-600 hover:text-orange-500 transition"
                     >
-                      👍 <span>{comment.likes || 0}</span>
+                      👍 <span>{comment.likes}</span>
                     </button>
 
                     {/* dislike button */}
                     <button
-                      onClick={() => handleDislike(comment.id)}
+                      onClick={() => handleDislike(comment.id, "dislike")}
                       className="flex items-center gap-1 text-gray-600 hover:text-red-500 transition"
                     >
-                      👎 <span>{comment.dislikes || 0}</span>
+                      👎 <span>{comment.dislikes}</span>
                     </button>
 
                     {currentUserId &&
