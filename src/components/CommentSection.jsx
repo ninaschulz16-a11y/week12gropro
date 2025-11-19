@@ -10,7 +10,6 @@ export default function CommentSection({
   currentUserId,
   currentUserProfile,
 }) {
-
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   // FAKE DATA
@@ -37,17 +36,45 @@ export default function CommentSection({
     },
   ];
 
-    // inital comments with fake ones
+  // inital comments with fake ones
   const [comments, setComments] = useState(
     initialComments?.length > 0 ? initialComments : fakeComments
   );
-  
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !currentUserId) return;
 
     setIsSubmitting(true);
+
+
+    // no backend needed, just for UI
+    const handleLike = (commentId) => {
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId ? { ...c, likes: (c.likes || 0) + 1 } : c
+        )
+      );
+    };
+
+    const handleDislike = (commentId) => {
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === commentId ? { ...c, dislikes: (c.dislikes || 0) + 1 } : c
+        )
+      );
+    };
+
+    const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diff = (now - date) / 1000; // seconds
+
+        if (diff < 60) return "just now";
+        if (diff < 3660) return `${Math.floor(diff / 60)}m ago`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+        
+    }
 
     try {
       const res = await fetch("/api/comments", {
