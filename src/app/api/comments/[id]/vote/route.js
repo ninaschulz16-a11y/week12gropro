@@ -3,6 +3,7 @@ import { db } from "@/utils/db";
 import { NextResponse } from "next/server";
 
 export async function POST(request, { params }) {
+    console.log("VOTE ROUTE HIT", params.id, type);
   try {
     const { userId } = auth();
 
@@ -18,7 +19,7 @@ export async function POST(request, { params }) {
     const column = type === "like" ? "likes" : "dislikes";
 
     const result = await db.query(
-      `UPDATE comments1 SET ${column} = ${column} + 1 WHERE id = $1 RETURNING *`,
+      `UPDATE comments SET ${column} = ${column} + 1 WHERE id = $1 RETURNING *`,
       [commentId]
     );
 

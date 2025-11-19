@@ -24,7 +24,7 @@ export async function DELETE(request, { params }) {
 
     // check if user owns the comment
     const commentResult = await db.query(
-      "SELECT author_id FROM comments1 WHERE id = $1",
+      "SELECT author_id FROM comments WHERE id = $1",
       [commentId]
     );
 

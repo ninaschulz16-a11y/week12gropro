@@ -41,6 +41,8 @@ export default function CommentSection({
     initialComments?.length > 0 ? initialComments : fakeComments
   );
 
+  
+
   // post request backend
   const handleVote = async (commentId, type) => {
     try {
