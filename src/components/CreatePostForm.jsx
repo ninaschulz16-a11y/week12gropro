@@ -29,7 +29,7 @@ export default function CreatePostForm() {
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("id")
-        .eq("clerk_id", user.id)
+        .eq("clerk_user_id", user.id)
         .single();
 
       if (profileError || !profile) {
