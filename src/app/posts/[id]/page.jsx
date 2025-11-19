@@ -136,7 +136,7 @@ export default function PostPage() {
           
           <Link href={`/profile/${post.author_profile_id}`}>
             <div className="flex items-center gap-3 mb-6 cursor-pointer hover:opacity-80">
-              <div className="w-12 h-12 rounded-full bg-[#3E513E] flex items-center justify-center text-white text-lg">
+              <div className="w-12 h-12 min-w-12 min-h-12 rounded-full bg-[#3E513E] flex items-center justify-center text-white text-lg">
                 {post.username?.charAt(0).toUpperCase()}
               </div>
               <div>
@@ -150,6 +150,16 @@ export default function PostPage() {
           </Link>
 
           <p className="text-gray-800 text-lg mb-6">{post.content}</p>
+
+          {post.image_url && (
+            <div className="mb-6">
+              <img 
+                src={post.image_url} 
+                alt="Post image" 
+                className="rounded-lg max-h-96 w-auto"
+              />
+            </div>
+          )}
 
         </div>
 
