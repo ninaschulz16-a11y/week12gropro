@@ -4,7 +4,6 @@ import { supabase } from "@/utils/supabase";
 import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 
-
 export default function CreatePostForm() {
   const { user } = useUser(); // get logged-in user
   const [title, setTitle] = useState("");
@@ -20,27 +19,30 @@ export default function CreatePostForm() {
     setIsSubmitting(true);
     setMessage("");
 
-    if (!user) {
+    if (!user || !user.id) {
+      console.log("User not ready yet:", user);
+
       setMessage("You must be logged in to create a post.");
       setIsSubmitting(false);
       return;
     }
 
-     try {
-    // Find the profile ID corresponding to the Clerk user ID
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("id")
-      .eq("clerk_id", user.id)
-      .single();
+    try {
+      console.log("Clerk user ID from client:", user.id);
+      // Find the profile ID corresponding to the Clerk user ID
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("clerk_user_id", user.id)
+        .single();
 
-    if (profileError || !profile) {
-      throw new Error("Profile not found for this user.");
-    }
+      if (profileError || !profile) {
+        throw new Error("Profile not found for this user.");
+      }
 
-    const author_id = profile.id; // Clerk user ID (temporary for demo)
+      const author_id = profile.id; // Clerk user ID (temporary for demo)
 
-    let image_url = null;
+      let image_url = null;
 
       if (image) {
         const fileExt = image.name.split(".").pop();
