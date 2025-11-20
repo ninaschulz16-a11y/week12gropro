@@ -56,7 +56,7 @@ export default function Map() {
     <MapContainer
       center={position}
       zoom={13}
-      style={{ height: "300px", width: "100%" }}
+      style={{ height: "300px", width: "100%", zIndex: 1 }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <Marker position={position} icon={customIcon}>
