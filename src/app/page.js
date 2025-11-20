@@ -25,7 +25,7 @@ export default function LandingPage() {
 
           <div className="relative h-80 md:h-96 rounded-2xl overflow-hidden">
             <Image
-              src="/images/neig.jpeg"
+              src="/neig.jpeg"
               alt="community"
               fill
               className="object-cover"
@@ -102,7 +102,7 @@ export default function LandingPage() {
 
           <div className="relative h-150 rounded-2xl overflow-hidden">
             <Image
-              src="/images/car.webp"
+              src="/car.webp"
               alt="navigating neighborhood"
               fill
               className="object-cover"
