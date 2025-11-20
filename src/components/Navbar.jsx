@@ -4,62 +4,64 @@ import Link from "next/link";
 import { useUser, UserButton } from "@clerk/nextjs";
 
 export default function Navbar() {
-    const { isSignedIn } = useUser();
+  const { isSignedIn } = useUser();
 
-    return (
-        <nav className="bg-white shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between">
-            
-            {/* logo / home link */}
-            <Link href="/" className="text-xl font-bold text-green-700">
-                neighbour net
+  return (
+    <nav className="bg-[#3E513E] shadow-md sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* logo / home link */}
+          <Link
+            href="/"
+            className="text-xl font-extrabold text-[#3E513E] font-serif tracking-wide drop-shadow-md"
+          >
+            Neighbour Net
+          </Link>
+
+          {/* nav links */}
+          <div className="flex items-center gap-6">
+            <Link
+              href="/posts"
+              className="text-gray-700 hover:text-green-700 transition"
+            >
+              Posts
             </Link>
 
-            {/* nav links */}
-            <div className="flex items-center gap-6">
-                <Link 
-                href="/posts" 
-                className="text-gray-700 hover:text-green-700 transition"
+            {isSignedIn ? (
+              <>
+                <Link
+                  href="/home"
+                  className="text-gray-700 hover:text-green-700 transition"
                 >
-                posts
+                  My Profile
                 </Link>
-
-                {isSignedIn ? (
-                <>
-                    <Link 
-                    href="/home" 
-                    className="text-gray-700 hover:text-green-700 transition"
-                    >
-                    my profile
-                    </Link>
-                    <Link 
-                    href="/create-post" 
-                    className="text-gray-700 hover:text-green-700 transition"
-                    >
-                    create post
-                    </Link>
-                    <UserButton afterSignOutUrl="/" />
-                </>
-                ) : (
-                <>
-                    <Link 
-                    href="/sign-in" 
-                    className="text-gray-700 hover:text-green-700 transition"
-                    >
-                    sign in
-                    </Link>
-                    <Link 
-                    href="/sign-up" 
-                    className="bg-green-700 text-white px-4 py-2 rounded-full hover:bg-green-800 transition"
-                    >
-                    sign up
-                    </Link>
-                </>
-                )}
-            </div>
-            </div>
+                <Link
+                  href="/create-post"
+                  className="text-gray-700 hover:text-green-700 transition"
+                >
+                  Create Post
+                </Link>
+                <UserButton afterSignOutUrl="/" />
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="text-gray-700 hover:text-green-700 transition"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  className="bg-green-700 text-white px-4 py-2 rounded-full hover:bg-green-800 transition"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+          </div>
         </div>
-        </nav>
-    );
+      </div>
+    </nav>
+  );
 }
