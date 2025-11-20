@@ -17,7 +17,8 @@ export default function PostsList() {
       try {
         const { data, error } = await supabase
           .from("posts")
-          .select(`
+          .select(
+            `
             id,
             content,
             created_at,
@@ -26,7 +27,8 @@ export default function PostsList() {
               username,
               avatar_url
             )
-          `)
+          `
+          )
           .order("created_at", { ascending: false });
 
         if (error) {
@@ -44,7 +46,7 @@ export default function PostsList() {
             avatar_url: post.profiles?.avatar_url || null,
             area: "London",
           }));
-          
+
           setPosts(formattedPosts);
           setFilteredPosts(formattedPosts);
         }
@@ -98,14 +100,15 @@ export default function PostsList() {
   return (
     <div className="min-h-screen py-8 px-4 bg-[#F5F5DC]">
       <div className="max-w-3xl mx-auto">
-        
         <h1 className="text-2xl font-bold mb-8 text-gray-800">All Posts</h1>
-        
+
         <Map />
 
         {/* filter section */}
         <div className="mt-8 bg-white p-6 rounded-xl shadow">
-          <h2 className="text-lg font-semibold mb-4 text-gray-800">Filter Posts</h2>
+          <h2 className="text-lg font-semibold mb-4 text-gray-800">
+            Filter Posts
+          </h2>
           <Filters onFilterChange={handleFilterChange} />
         </div>
 
@@ -137,7 +140,9 @@ export default function PostsList() {
           ))}
 
           {filteredPosts.length === 0 && (
-            <p className="text-gray-500 text-center py-4">No posts found for this filter</p>
+            <p className="text-gray-500 text-center py-4">
+              No posts found for this filter
+            </p>
           )}
         </div>
       </div>
