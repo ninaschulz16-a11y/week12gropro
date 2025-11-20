@@ -1,9 +1,4 @@
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
@@ -29,51 +24,53 @@ export default function RootLayout({ children }) {
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {/* navbar */}
-          <nav className="bg-white shadow-md sticky top-0 z-50">
+          <nav className="bg-[#375f37] shadow-md sticky top-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-3">
               <div className="flex items-center justify-between">
-                
                 {/* logo */}
-                <Link href="/" className="text-xl font-bold text-[#3E513E]">
-                  neighbour net
+                <Link
+                  href="/"
+                  className="text-xl font-bold text-white tracking-wide drop-shadow-md"
+                >
+                  Neighbour Net
                 </Link>
 
                 {/* nav links */}
                 <div className="flex items-center gap-2">
-                  <Link 
-                    href="/posts" 
-                    className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
+                  <Link
+                    href="/posts"
+                    className="text-white hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                   >
-                    posts
+                    Posts
                   </Link>
 
                   <SignedOut>
-                    <Link 
-                      href="/sign-in" 
-                      className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
+                    <Link
+                      href="/sign-in"
+                      className="text-white hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                     >
-                      sign in
+                      Sign In
                     </Link>
-                    <Link 
-                      href="/sign-up" 
+                    <Link
+                      href="/sign-up"
                       className="bg-[#3E513E] text-white px-4 py-2 rounded-full hover:bg-[#2d3d2d] transition"
                     >
-                      sign up
+                      Sign Up
                     </Link>
                   </SignedOut>
 
                   <SignedIn>
-                    <Link 
-                      href="/home" 
-                      className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
+                    <Link
+                      href="/home"
+                      className="text-white hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                     >
-                      my profile
+                      My Profile
                     </Link>
-                    <Link 
-                      href="/create-post" 
-                      className="text-gray-700 hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
+                    <Link
+                      href="/create-post"
+                      className="text-white hover:text-[#3E513E] hover:bg-gray-100 px-3 py-2 rounded-lg transition"
                     >
-                      create post
+                      Create Post
                     </Link>
                     <UserButton afterSignOutUrl="/" />
                   </SignedIn>
